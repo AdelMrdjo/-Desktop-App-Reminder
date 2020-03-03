@@ -1,0 +1,284 @@
+@import url('https://fonts.googleapis.com/css?family=Lacquer&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Oxanium&display=swap');
+@import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
+body{
+	font-family: 'Lacquer';
+	background:url('../img/background.jpg');
+	background-position: center;
+  	background-repeat: no-repeat;
+  	background-size: cover;
+  	background-attachment: fixed;
+	margin: 0;
+	padding:0;
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+	overflow: hidden;
+}
+header{
+	width: 100vw;
+	height: 35px;
+	padding-top:3px;
+	padding-bottom: 3px;
+	overflow: hidden;
+	-webkit-app-region: drag;
+}
+header img{
+	height: 100%;
+	padding-left:4px;
+}
+header span{
+	margin:0;
+	padding:0;
+	position: relative;
+	bottom:11px;
+	color:#fff;
+}
+span.close,span.minimize{
+	float:right;
+	bottom: 7px;
+	height: 45px;
+	display: grid;
+	justify-content: center;
+	align-content: center;
+	padding:0px 7px;
+	cursor: pointer;
+	color:gray;
+	-webkit-app-region: no-drag;
+}
+span.close i,span.minimize i{
+	height: 100%;
+	font-size:26px;
+	font-weight: 600;
+}
+span.close i{
+	color:#eb0000;
+}
+span.minimize i{
+	margin-top:12px;
+}
+span.close i:hover,span.minimize i:hover{
+	color:#fff;
+}
+/*===============================LOGIN FORM=========================*/
+.loginForm{
+	width: 320px;
+    height: 360px;
+    background: rgba(0,0,0,.6);
+    color: #fff;
+    top: 56%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    padding: 70px 30px;
+    border-radius:15px;
+}
+.loginForm .avatar{
+	width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    top: -50px;
+    left: calc(50% - 50px);
+    -webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select: none;
+}
+.loginForm h1{
+	margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    font-size: 22px;
+}
+.loginForm form p{
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+.loginForm form input{
+    width: 100%;
+    margin-bottom: 20px;
+}
+.loginForm form input[type="text"],.loginForm form input[type="password"]{
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+}
+.loginForm form input[type="submit"]{
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #fb2525;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+}
+.loginForm form input[type="submit"]:hover{
+    cursor: pointer;
+    background: #d61c1c;
+}
+.loginForm form p.error{
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 20px;
+    color: orange;
+    margin-top:-5px;
+    text-align: center;
+}
+/*===============================KRAJ LOGIN FORM=========================*/
+/*===============================LOGGED DIO============================*/
+.logged{
+	display: none;
+	padding:10px;
+}
+.logged h1{
+	color:#ebebeb;
+}
+.logged section.createNew,.logged section.updateAdmin{
+	width: 320px;
+    background: rgba(0,0,0,.91);
+    color: #fff;
+    top: 56%;
+    left: 50%;
+    position: fixed;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    padding: 24px 30px;
+    border-radius: 15px;
+    display: none;
+}
+.createNew{
+	display:none;
+}
+.logged section.createNew h2,.logged section.updateAdmin h2{
+	margin:0;
+}
+.logged section.createNew input[type="text"],.logged section.createNew input[type="password"],.logged section.updateAdmin input[type="text"]{
+    border: none;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+}
+.logged section.createNew button.store,.logged section.updateAdmin button.update{
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #fb2525;
+    color: #fff;
+    font-size: 18px;
+    position: relative;
+    left:50%;
+    transform:translateX(-50%);
+    margin-top:5px;
+    border-radius:5px;
+}
+.logged button{
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #fb2525;
+    color: #fff;
+    font-size: 18px;
+    padding-left:5px;
+    margin-left:-7px;
+    padding:5px 10px;
+}
+.logged button:nth-child(2){
+	margin-left:0px;
+}
+.logged button:hover,.logged section.createNew button.store:hover,section.updateAdmin button.update:hover{
+	cursor: pointer;
+    background: #d61c1c;
+}
+.closeCreateNew,.closeupdateAdmin{
+	float:right;
+	position: relative;
+	top: -15px;
+    left: 15px;
+	cursor: pointer
+}
+.closeCreateNew i,.closeupdateAdmin i{
+	color:#eb0000;
+}
+.closeCreateNew i:hover,.closeupdateAdmin i:hover{
+	color:#fff;
+}
+section.createNew p.createMessage,section.updateAdmin p.warn{
+	color:orange;
+	text-align: center;
+}
+section.data{
+	max-height: 409px;
+	width: 800px;
+	margin-left:-10px;
+	overflow: auto;
+	font-family: 'Oxanium';
+}
+section.data .row{
+	display: grid;
+	font-size: 18px;
+	min-height: 20px;
+	grid-template-columns: 70px 100px auto;
+	color:#fff;
+}
+section.data .row:hover{
+	color:#000;
+}
+section.data .row:hover{
+	background:rgba(255,255,255,.5);
+}
+section.data .row .action{
+	padding:5px;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+}
+section.data .row .action i{
+	font-size:20px;
+	color:rgba(255,0,0,.8);
+}
+section.data .row .action i:hover{
+	color:#000;
+	cursor: pointer;
+}
+section.data .row .created{
+	padding:2px;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+}
+section.data .row .desc{
+	padding:2px;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+}
+div.nodata{
+	font-family: 'Lacquer';
+	font-size: 18px;
+	padding-left:13px;
+	color:#fff;
+}
+/*===============================KRAJ LOGGED DIO============================*/
+/*-------------------------------------SCROLLBAR----------------------*/
+::-webkit-scrollbar {
+width: 6px;
+}
+::-webkit-scrollbar-track {
+border-radius: 0px;
+background:#000;
+}
+::-webkit-scrollbar-thumb {
+background: linear-gradient(to top,#000,#a10000,#000);
+border-radius: 0px;
+}
+/*-----------------------------------SCROLLBAR KRAJ----------------------*/

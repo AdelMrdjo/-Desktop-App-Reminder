@@ -1,0 +1,220 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+  <header>
+    <img src="icon.ico">
+    <span>Reminder</span>
+    <span class="close" id="close"><i class="fas fa-times"></i></span>
+    <span class="minimize" id="minimize"><i class="fas fa-minus"></i></span>
+  </header>
+  <div class="loginForm">
+    <img src="img/avatar.png" class="avatar">
+        <h1>Login Here</h1>
+        <form onsubmit="event.preventDefault();">
+            <p>Username</p>
+            <input type="text" id="loginUsername" placeholder="Enter Username" autocomplete="off">
+            <p>Password</p>
+            <input type="password" id="loginPassword" placeholder="Enter Password">
+            <input type="submit" name="" value="Login">
+        </form>
+    </div>
+    <div class="logged">
+      <h1>Note to self...</h1>
+      <button><i class="far fa-plus-square"></i></button>
+      <button><i class="fas fa-cog"></i></button>
+      <button><i class="fas fa-sign-out-alt"></i></button>
+      <section class="createNew">
+        <span class="closeCreateNew"><i class="fas fa-times"></i></span>
+        <h2>Create new one...</h2>
+        <p>Description</p>
+        <input type="text" name="description" placeholder="Enter description" autocomplete="off">
+        <button class="store">Create new</button>
+        <p class="createMessage"></p>
+      </section>
+
+      <section class="updateAdmin">
+        <span class="closeupdateAdmin"><i class="fas fa-times"></i></span>
+        <h2>Settings</h2>
+        <p>New username</p>
+        <input type="text" name="updateUsername" placeholder="Enter new username" autocomplete="off">
+        <p>New password</p>
+        <input type="text" name="updatePassword" placeholder="Enter new password" autocomplete="off">
+        <button class="update">Update</button>
+        <p class="warn"></p>
+      </section>
+
+
+      <br><br>
+      <section class="data"> </section>
+  </div>
+
+<script>
+var $ = require("jquery");
+const fs = require('fs');
+if(fs.existsSync("base.db")){
+  refreshData();
+}else{
+  fs.appendFile('base.db', '', function (err) {
+    var sqlite3 = require('sqlite3').verbose();
+    var db = new sqlite3.Database('base.db');
+    var today = new Date();
+    var date = repairDate(today.getDate())+'.'+repairDate(today.getMonth()+1)+'.'+repairDate(today.getFullYear());
+    db.serialize(function(){
+      db.run("CREATE TABLE admins ('id'  INTEGER PRIMARY KEY AUTOINCREMENT,'username'  TEXT,'password'  TEXT)");
+      var stmt = db.prepare("INSERT INTO admins VALUES(null,'admin','admin')");
+      stmt.run();
+      stmt.finalize();
+      db.run("CREATE TABLE users ('id'  INTEGER PRIMARY KEY AUTOINCREMENT,'username'  TEXT,'password'  TEXT)");
+      var stmt = db.prepare("INSERT INTO users VALUES(null,'Your notes','"+date+"')");
+      stmt.run();
+      stmt.finalize();
+      db.each("SELECT id,username,password FROM users",function(err,row){
+        $("section.data").prepend("<div class='row'><div class='action'><i class='fas fa-trash-alt' onclick='remove(this,"+row.id+")'></i></div><div class='created'>"+row.password+"</div><div class='desc'>"+row.username+"</div></div>");
+      })
+    });
+    db.close();
+  });
+}
+
+$("[type='submit']").on("click",function(){
+  var username = $("#loginUsername").val().replace(/[^a-z0-9]/gi,'');
+  var password =  $("#loginPassword").val().replace(/[^a-z0-9]/gi,'');
+  $("p.error").remove();
+  if(username.length == 0) return $("form").append("<p class='error'>Username field is empty!</p>");
+  if(password.length == 0) return $("form").append("<p class='error'>Password field is empty!</p>");
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('base.db');
+  db.serialize(function(){
+    db.each("SELECT count(id) as numberRows,username,password FROM admins WHERE username = '"+username+"' AND password = '"+password+"'",function(err,row){
+      if(row.numberRows == 1){
+        $("#loginUsername").val("");
+        $("#loginPassword").val("");
+        $("[name='updateUsername']").val(row.username);
+        $("[name='updatePassword']").val(row.password);
+        $(".loginForm img").fadeOut("slow",function(){
+          $(".loginForm").slideUp("slow",function(){
+            setTimeout(function(){ $("div.logged").slideDown("slow"); }, 500);
+          })
+        });
+      }else{
+        $("form").append("<p class='error'>Wrong username or password...</p>");
+      }
+    })
+  })
+  db.close();
+})
+//==========================SPREMI U BAZU PODATAKA=========================//
+function repairDate(date){
+  if(date < 10) return "0"+date;
+  else return date;
+}
+$("button.store").on("click",function(){
+  $("p.createMessage").text("");
+  var username = $("[name='description']").val().replace(/[^a-z0-9]/gi,' ');
+  if(username.length == 0) return $("p.createMessage").text("Empty field or unallowed characters...");
+  var today = new Date();
+  var date = repairDate(today.getDate())+'.'+repairDate(today.getMonth()+1)+'.'+repairDate(today.getFullYear());
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('base.db');
+  db.serialize(function(){
+    var query = db.prepare("INSERT INTO users VALUES(null,'"+username+"','"+date+"')");
+    query.run();
+    query.finalize();
+  })
+  $("div.row").remove();
+  db.each("SELECT id,username,password FROM users",function(err,row){
+    $("section.data").prepend("<div class='row'><div class='action'><i class='fas fa-trash-alt' onclick='remove(this,"+row.id+")'></i></div><div class='created'>"+row.password+"</div><div class='desc'>"+row.username+"</div></div>");
+  })
+  $("[name='description']").val("");
+  $("div.nodata").remove();
+  $("p.createMessage").text("Successfully.");
+  db.close();
+})
+$("button.update").on("click",function(){
+  $("p.warn").text("");
+  var newUsername = $("[name='updateUsername']").val().replace(/[^a-z0-9]/gi,'');
+  var newPassword = $("[name='updatePassword']").val().replace(/[^a-z0-9]/gi,'');
+  if(newUsername.length == 0 || newPassword.length == 0) return $("p.warn").text("Empty field or unallowed characters...");
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('base.db');
+  db.serialize(function(){
+    var query = db.prepare("UPDATE admins SET username = '"+newUsername+"', password = '"+newPassword+"' WHERE id=1");
+    query.run();
+    query.finalize();
+  })
+  $("[name='updateUsername']").val(newUsername);
+  $("[name='updatePassword']").val(newPassword);
+  $("p.warn").text("Successfully updated.");
+  db.close();
+})
+//========================OSVJEZI MI STRANICU PRILIKOM UCITAVANJA STRANICE
+//========================FUNKCIJA ZA OSVJEZAVANJE STRANICE SA PODATCIMA================//
+function refreshData(){
+  $("div.row").remove();
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('base.db');
+  $("section.data").prepend("<div class='nodata'>Reminder is empty</div>");
+  db.serialize(function(){
+    db.each("SELECT id,username,password FROM users",function(err,row){
+      $("div.nodata").remove();
+      $("section.data").prepend("<div class='row'><div class='action'><i class='fas fa-trash-alt' onclick='remove(this,"+row.id+")'></i></div><div class='created'>"+row.password+"</div><div class='desc'>"+row.username+"</div></div>");
+    })
+  })
+  db.close();
+}
+//==========================FUNKCIJA ZA BRISANJE TODO ITEMA========================//
+function remove(f,id){
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('base.db');
+  db.serialize(function(){
+    var query = db.prepare("DELETE FROM users WHERE id="+id+"");
+    query.run();
+    query.finalize();
+    db.each("SELECT count(id) as numberRows FROM users",function(err,row){
+      if(row.numberRows == 0) $("section.data").prepend("<div class='nodata'>Reminder is empty</div>");
+    })
+  })
+  db.close();
+  $(f).parent().parent().remove();
+}
+$(".closeCreateNew").on("click",function(){
+  $("section.createNew").slideUp("slow");
+  $("p.createMessage").text("");
+});
+$(".closeupdateAdmin").on("click",function(){
+  $("section.updateAdmin").slideUp("slow");
+  $("p.warn").text("");
+});
+//PRIKAZI MI KREIRANJE NOVE STAVKE
+$(".logged button:nth-child(2)").on("click",function(){
+	$("p.createMessage").text("");
+	$("p.warn").text("");
+  	$("section.updateAdmin").slideUp("normal",function(){
+    	$("section.createNew").slideDown("slow");
+  	});
+})
+//PRIKAZI MI UPDATE ADMINA
+$(".logged button:nth-child(3)").on("click",function(){
+	$("p.createMessage").text("");
+	$("p.warn").text("");
+  	$("section.createNew").slideUp("normal",function(){
+    	$("section.updateAdmin").slideDown("slow");
+  	});
+})
+//FUNKCIJA ZA ODJAVU
+$(".logged button:nth-child(4)").on("click",function(){
+  $("section.createNew").slideUp("normal");
+  $("section.updateAdmin").slideUp("normal");
+  $("div.logged").slideUp("slow",function(){
+    $(".loginForm img").hide();
+    $(".loginForm").slideDown("slow",function(){
+      $(".loginForm img").fadeIn("slow");
+    });
+  });
+})
+</script>
+<script type="text/javascript" src="js/remote.js"></script>
+</body>
+</html>

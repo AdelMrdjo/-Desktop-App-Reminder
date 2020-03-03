@@ -1,0 +1,29 @@
+{
+	"name": "Reminder",
+	"version": "1.0.0",
+	"main": "main.js",
+	"devDependencies": {
+		"asar": "^2.1.0",
+		"electron": "^7.1.10",
+		"electron-builder": "^19.56.2",
+		"electron-packager": "^14.2.1"
+	},
+	"scripts": {
+		"start": "electron .",
+		"dist": "electron-builder --ia32 --x64 -w"
+	},
+	"dependencies": {
+		"bootstrap": "^3.4.1",
+		"g": "^2.0.1",
+		"jquery": "^3.4.1",
+		"mysql": "^2.18.1",
+		"sqlite3": "^4.1.1"
+	},
+	"build": {
+		"appId": "TODOApp",
+		"win": {
+			"target": "nsis",
+			"icon": "icon.ico"
+		}
+	}
+}
